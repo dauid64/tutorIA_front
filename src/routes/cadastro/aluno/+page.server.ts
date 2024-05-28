@@ -1,5 +1,7 @@
-import type { RequestEvent, HandleFetch } from '@sveltejs/kit';
+import type { RequestEvent } from '@sveltejs/kit';
+import { redirect } from '@sveltejs/kit';
 import type { UsuarioForCreate } from '$lib/server/models/usuario';
+import type { alunoForCreate } from '$lib/server/models/aluno';
 
 /** @type {import('./$types').Actions} */
 export const actions = {
@@ -15,7 +17,7 @@ export const actions = {
             pwd
         }
 
-        const response = await fetch(
+        const responseCreateUser = await fetch(
             'http://localhost:8080/api/usuario', {
                 method: 'POST',
                 headers: {
@@ -25,8 +27,36 @@ export const actions = {
             }
         )
 
-        const responseData = await response.json()
+        const createUserData = await responseCreateUser.json()
 
-        return responseData
+        if (!responseCreateUser.ok) {
+            return createUserData
+        }
+
+        const userID = createUserData.result.id
+        const nome = data.get('name')?.toString()
+
+        const alunoForCreate: alunoForCreate = {
+            usuario_id: userID,
+            nome: nome
+        }
+
+        const responseCreateAluno = await fetch(
+            'http://localhost:8080/api/aluno', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(alunoForCreate)
+            }
+        )
+
+        const createAlunoData = await responseCreateAluno.json()
+
+        if (!responseCreateAluno.ok) {
+            return createAlunoData
+        }
+
+        redirect(302, "/dashboard")
     }
 }

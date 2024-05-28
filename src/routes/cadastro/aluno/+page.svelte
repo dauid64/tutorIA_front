@@ -1,13 +1,17 @@
 <script lang="ts">
     import { enhance } from '$app/forms';
+  import { goto } from '$app/navigation';
     import { Icon, ExclamationTriangle } from "svelte-hero-icons";
 
     let formErroMsg: String;
 
     const handleResult = ({ formElement, formData, action, cancel }) => {
         return async ({result}) => {
-            if (result.data.error) {
+            if (result.data?.error) {
                 formErroMsg = result.data.error.data.detail
+            }
+            if (result.type === 'redirect') {
+                goto(result.location)
             }
         }
     }
@@ -28,16 +32,16 @@
         <form method="POST" use:enhance={handleResult}>
             <section class="p-4">
                 <label class="label p-1">
+                    <span>Nome Completo</span>
+                    <input class="input" type="text" name="name" />
+                </label>
+                <label class="label p-1">
                     <span>Nome de usuário</span>
                     <input class="input" type="text" name="username" />
                 </label>
                 <label class="label p-1">
                     <span>Senha</span>
-                    <input class="input" type="text" name="pwd" />
-                </label>
-                <label class="label p-1">
-                    <span>Nome Completo</span>
-                    <input class="input" type="text" name="name" />
+                    <input class="input" type="password" name="pwd" />
                 </label>
             </section>
             <footer class="card-footer">
