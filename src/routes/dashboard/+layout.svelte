@@ -1,11 +1,11 @@
 <script lang="ts">
-    import { AppRail, AppRailTile, AppRailAnchor } from '@skeletonlabs/skeleton';
+    import { AppRail, AppRailTile, AppRailAnchor, AppShell } from '@skeletonlabs/skeleton';
     import { Icon, BookOpen, UserGroup, Cog6Tooth } from "svelte-hero-icons";
     import { page } from '$app/stores';
 </script>
 
-<div class="flex">
-    <div class="h-screen">
+<AppShell>
+	<svelte:fragment slot="sidebarLeft">
         <AppRail>
             <svelte:fragment slot="lead">
                 <AppRailAnchor href="/dashboard" selected={$page.url.pathname === '/dashboard'}>
@@ -20,7 +20,6 @@
                 </svelte:fragment>
                 <span>Alunos</span>
             </AppRailAnchor>
-            <!-- --- -->
             <AppRailAnchor href="/dashboard/materias" selected={$page.url.pathname === '/dashboard/materias'} target="_self" title="Materias">
                 <svelte:fragment slot="lead">
                     <div class="flex items-center justify-center">
@@ -29,7 +28,6 @@
                 </svelte:fragment>
                 <span>Matérias</span>
             </AppRailAnchor>
-            <!-- --- -->
             <svelte:fragment slot="trail">
                 <AppRailAnchor href="/dashboard/configuracao" selected={$page.url.pathname === '/dashboard/configuracao'} target="_self" title="Configurações">
                     <div class="flex items-center justify-center">
@@ -38,7 +36,13 @@
                 </AppRailAnchor>
             </svelte:fragment>
         </AppRail>
-    </div>
-    
-    <slot></slot>
-</div>
+    </svelte:fragment>
+
+	<slot />
+
+	<svelte:fragment slot="pageFooter">
+        <div class="text-center">
+            TutorIA @ Carlos David
+        </div>
+    </svelte:fragment>
+</AppShell>

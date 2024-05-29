@@ -1,14 +1,15 @@
-<div class="grow m-24">
-    <div class="container flex justify-between">
-        <div class="w-48">
-            <input type="text" class="input p-2" placeholder="Pesquisar...">
+<div class="grow m-8 md:m-24">
+    <div class="flex-col md:flex-row md:flex container justify-between items-center">
+        <div class="flex-col md:flex md:flex-row">
+            <input type="text" class="input p-1 md:p-2 mb-2" placeholder="Procurar...">
+            <button type="button" class="btn-sm md:btn variant-filled-secondary w-full md:w-fit mb-2">Pesquisar</button>
         </div>
-        <div>
-            <a href="/cadastro/aluno" class="btn variant-filled-secondary">Cadastrar Aluno</a>
+        <div class="flex">
+            <a href="/cadastro/aluno" class="btn-sm md:btn variant-filled-secondary w-full text-center">Cadastrar Aluno</a>
         </div>
     </div>
     
-    <div class="flex mt-8">
+    <div class="flex mt-7">
         <div class="container">
             <div class="table-container">
                 <table class="table table-hover">
