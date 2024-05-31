@@ -2,11 +2,14 @@ import type { RequestEvent } from '@sveltejs/kit';
 import { redirect } from '@sveltejs/kit';
 import type { UsuarioForCreate } from '$lib/server/models/usuario';
 import type { alunoForCreate } from '$lib/server/models/aluno';
+import type TutorIAAPI from '$lib/api';
 
 /** @type {import('./$types').Actions} */
 export const actions = {
     default: async (event: RequestEvent) => {
-        const { request, fetch } = event
+        const { request, locals } = event
+        const tutorIAAPI = locals.tutorIAAPI as TutorIAAPI
+
         const data = await request.formData();
 
         const username = data.get('username')?.toString()
@@ -17,46 +20,53 @@ export const actions = {
             pwd
         }
 
-        const responseCreateUser = await fetch(
-            'http://localhost:8080/api/usuario', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(usuarioForCreate)
+        try {
+            const responseCreateUser = await tutorIAAPI.fetchWrapper(
+                'usuario',
+                {
+                    method: 'POST',
+                    body: usuarioForCreate
+                }
+            )
+
+            const createUserData = await responseCreateUser.json()
+
+            if (!responseCreateUser.ok) {
+                return createUserData
             }
-        )
 
-        const createUserData = await responseCreateUser.json()
+            const userID = createUserData.result.id
+            const nome = data.get('name')?.toString()
 
-        if (!responseCreateUser.ok) {
-            return createUserData
-        }
-
-        const userID = createUserData.result.id
-        const nome = data.get('name')?.toString()
-
-        const alunoForCreate: alunoForCreate = {
-            usuario_id: userID,
-            nome: nome
-        }
-
-        const responseCreateAluno = await fetch(
-            'http://localhost:8080/api/aluno', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(alunoForCreate)
+            const alunoForCreate: alunoForCreate = {
+                usuario_id: userID,
+                nome: nome
             }
-        )
 
-        const createAlunoData = await responseCreateAluno.json()
+            const responseCreateAluno = await tutorIAAPI.fetchWrapper(
+                'aluno',
+                {
+                    method: 'POST',
+                    body: alunoForCreate
+                }
+            )
 
-        if (!responseCreateAluno.ok) {
-            return createAlunoData
-        }
+            const createAlunoData = await responseCreateAluno.json()
 
-        redirect(302, "/dashboard")
+            if (!responseCreateAluno.ok) {
+                return createAlunoData
+            }
+        } catch(err: any) {
+            console.log('Erro ao chamar API.')
+            return {
+                'error': {
+                    'data': {
+                        'detail': 'Erro ao criar aluno'
+                    }
+                }
+            }
+        }  
+
+        throw redirect(302, "/dashboard")
     }
 }
