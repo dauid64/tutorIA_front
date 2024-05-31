@@ -7,8 +7,13 @@
 
     const handleResult = ({ formElement, formData, action, cancel }) => {
         return async ({result}) => {
+            console.log(result)
             if (result.data?.error) {
-                formErroMsg = result.data.error.data.detail
+                if (result.data.error.data.detail) {
+                    formErroMsg = result.data.error.data.detail
+                } else {
+                    formErroMsg = 'Erro inesperado'
+                }
             }
             if (result.type === 'redirect') {
                 goto(result.location)

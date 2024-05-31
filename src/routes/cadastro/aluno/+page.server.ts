@@ -20,52 +20,37 @@ export const actions = {
             pwd
         }
 
-        try {
-            const responseCreateUser = await tutorIAAPI.fetchWrapper(
-                'usuario',
-                {
-                    method: 'POST',
-                    body: usuarioForCreate
-                }
-            )
-
-            const createUserData = await responseCreateUser.json()
-
-            if (!responseCreateUser.ok) {
-                return createUserData
+        const responseCreateUserData = await tutorIAAPI.fetchWrapper(
+            'usuario',
+            {
+                method: 'POST',
+                body: usuarioForCreate
             }
+        )
 
-            const userID = createUserData.result.id
-            const nome = data.get('name')?.toString()
+        if (responseCreateUserData.error) {
+            return responseCreateUserData
+        }
 
-            const alunoForCreate: alunoForCreate = {
-                usuario_id: userID,
-                nome: nome
+        const userID = responseCreateUserData.result.id
+        const nome = data.get('name')?.toString()
+
+        const alunoForCreate: alunoForCreate = {
+            usuario_id: userID,
+            nome: nome
+        }
+
+        const responseCreateAlunoData = await tutorIAAPI.fetchWrapper(
+            'aluno',
+            {
+                method: 'POST',
+                body: alunoForCreate
             }
+        )
 
-            const responseCreateAluno = await tutorIAAPI.fetchWrapper(
-                'aluno',
-                {
-                    method: 'POST',
-                    body: alunoForCreate
-                }
-            )
-
-            const createAlunoData = await responseCreateAluno.json()
-
-            if (!responseCreateAluno.ok) {
-                return createAlunoData
-            }
-        } catch(err: any) {
-            console.log('Erro ao chamar API.')
-            return {
-                'error': {
-                    'data': {
-                        'detail': 'Erro ao criar aluno'
-                    }
-                }
-            }
-        }  
+        if (responseCreateAlunoData.error) {
+            return responseCreateUserData
+        }
 
         throw redirect(302, "/dashboard")
     }
