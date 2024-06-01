@@ -9,5 +9,8 @@ declare global {
 		interface Locals {
 			tutorIAAPI: TutorIAAPI
 		}
+		interface PageData {
+			flash?: { type: 'success' | 'error'; message: string };
+		}
 	}
 }

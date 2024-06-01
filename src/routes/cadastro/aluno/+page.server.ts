@@ -1,19 +1,33 @@
 import type { RequestEvent } from '@sveltejs/kit';
-import { redirect } from '@sveltejs/kit';
-import type { UsuarioForCreate } from '$lib/server/models/usuario';
-import type { alunoForCreate } from '$lib/server/models/aluno';
+import { fail } from '@sveltejs/kit';
+import { redirect } from 'sveltekit-flash-message/server';
+import { alunoSchema, type alunoForCreate } from '$lib/server/models/aluno';
 import type TutorIAAPI from '$lib/api';
+import { superValidate } from 'sveltekit-superforms';
+import { zod } from 'sveltekit-superforms/adapters';
+import type { UsuarioForCreate } from '$lib/server/models/usuario';
+import { setFlash } from 'sveltekit-flash-message/server';
+
+export const load = (async () => {
+    const form = await superValidate(zod(alunoSchema))
+
+    return { form }
+})
 
 /** @type {import('./$types').Actions} */
 export const actions = {
     default: async (event: RequestEvent) => {
-        const { request, locals } = event
+        const { request, locals, cookies } = event
         const tutorIAAPI = locals.tutorIAAPI as TutorIAAPI
 
-        const data = await request.formData();
+        const form = await superValidate(request, zod(alunoSchema))
 
-        const username = data.get('username')?.toString()
-        const pwd = data.get('pwd')?.toString()
+        if (!form.valid) {
+            return fail(400, { form })
+        }
+
+        const username = form.data.username
+        const pwd = form.data.pwd
 
         const usuarioForCreate: UsuarioForCreate = {
             username,
@@ -29,11 +43,12 @@ export const actions = {
         )
 
         if (responseCreateUserData.error) {
-            return responseCreateUserData
+            setFlash({ type: 'error', message: 'Não foi possível criar o aluno.'}, cookies)
+            return fail(400, { form })
         }
 
         const userID = responseCreateUserData.result.id
-        const nome = data.get('name')?.toString()
+        const nome = form.data.nome
 
         const alunoForCreate: alunoForCreate = {
             usuario_id: userID,
@@ -49,9 +64,10 @@ export const actions = {
         )
 
         if (responseCreateAlunoData.error) {
-            return responseCreateUserData
+            setFlash({ type: 'error', message: 'Não foi possível criar o aluno.'}, cookies)
+            return fail(400, { form })
         }
 
-        throw redirect(302, "/dashboard")
+        redirect("/dashboard", { type: 'success', message: 'Aluno criado com sucesso!'}, cookies)
     }
 }
