@@ -1,3 +1,11 @@
+<script lang="ts">
+  import { isoDateStringForFormatBR } from '$lib/utils/formatDate.js';
+
+    export let data
+
+    let alunos = data.alunos
+</script>
+
 <div class="grow m-8 md:m-24">
     <div class="flex-col md:flex-row md:flex container justify-between items-center">
         <div class="flex-col md:flex md:flex-row">
@@ -22,17 +30,23 @@
                         </tr>
                     </thead>
                     <tbody>
+                        {#each alunos as aluno (aluno.id)}
+                            <tr>
+                                <td>{ isoDateStringForFormatBR(aluno.created_at) }</td>
+                                <td>{ aluno.nome }</td>
+                                <td>{ aluno.username }</td>
+                                <td>?</td>
+                            </tr>
+                        {:else}
                         <tr>
-                            <td>1</td>
-                            <td>Carlos</td>
-                            <td>Xe</td>
-                            <td>4</td>
+                            <td colspan="4">Nenhum aluno encontrado</td>
                         </tr>
+                        {/each}
                     </tbody>
                     <tfoot>
                         <tr>
                             <th colspan="3">Total de Alunos</th>
-                            <td>4</td>
+                            <td>{ alunos.length }</td>
                         </tr>
                     </tfoot>
                 </table>
