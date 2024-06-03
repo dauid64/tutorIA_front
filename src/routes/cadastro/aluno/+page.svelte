@@ -9,7 +9,7 @@ import { Icon, ExclamationTriangle } from "svelte-hero-icons";
 </script>
 
 <div class="h-screen w-screen flex flex-col justify-center items-center">
-	<div class="card p-4">
+	<div class="card p-4 w-3/4 md:w-2/4 lg:w-1/3">
         <header class="card-header">Cadastro de Aluno</header>
         <form method="POST" use:enhance>
             <section class="p-4">
