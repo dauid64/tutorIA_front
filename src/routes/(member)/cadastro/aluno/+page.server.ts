@@ -1,11 +1,10 @@
 import type { RequestEvent } from '@sveltejs/kit';
 import { fail } from '@sveltejs/kit';
 import { redirect } from 'sveltekit-flash-message/server';
-import { alunoSchema, type alunoForCreate } from '$lib/server/models/aluno';
+import { alunoSchema } from '$lib/server/models/aluno';
 import type TutorIAAPI from '$lib/api';
 import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
-import type { UsuarioForCreate } from '$lib/server/models/usuario';
 import { setFlash } from 'sveltekit-flash-message/server';
 
 export const load = (async () => {
@@ -26,40 +25,26 @@ export const actions = {
             return fail(400, { form })
         }
 
-        const username = form.data.username
-        const pwd = form.data.pwd
-
-        const usuarioForCreate: UsuarioForCreate = {
-            username,
-            pwd
-        }
-
         const responseCreateUserData = await tutorIAAPI.fetchWrapper(
             'usuario',
             {
                 method: 'POST',
-                body: usuarioForCreate
+                body: form.data
             }
         )
 
         if (responseCreateUserData.error) {
-            setFlash({ type: 'error', message: 'Não foi possível criar o aluno.'}, cookies)
+            setFlash({ type: 'error', message: 'Não foi possível criar o usuário.'}, cookies)
             return fail(400, { form })
         }
 
-        const userID = responseCreateUserData.result.id
-        const nome = form.data.nome
-
-        const alunoForCreate: alunoForCreate = {
-            usuario_id: userID,
-            nome: nome
-        }
+        form.data.usuario_id = responseCreateUserData.result.id
 
         const responseCreateAlunoData = await tutorIAAPI.fetchWrapper(
             'aluno',
             {
                 method: 'POST',
-                body: alunoForCreate
+                body: form.data
             }
         )
 

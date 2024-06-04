@@ -1,38 +1,39 @@
 <script lang="ts">
     import AlertError from "$lib/components/alerts/AlertError.svelte";
-import { Icon, ExclamationTriangle } from "svelte-hero-icons";
-    import { superForm } from 'sveltekit-superforms';
+    import { filesProxy, superForm } from 'sveltekit-superforms';
 
     export let data
 
     const { form, errors, constraints, message, enhance } = superForm(data.form)
+
+    const conteudos = filesProxy(form, 'conteudos')
 </script>
 
 <div class="h-screen w-screen flex flex-col justify-center items-center">
 	<div class="card p-4 w-3/4 md:w-2/4 lg:w-1/3">
-        <header class="card-header">Cadastro de Aluno</header>
-        <form method="POST" use:enhance>
+        <header class="card-header">Cadastro de Matéria</header>
+        <form method="POST" use:enhance enctype="multipart/form-data">
             <section class="p-4">
                 <label class="label p-1">
-                    <span>Nome Completo</span>
+                    <span>Nome</span>
                     <input class="input" type="text" name="nome" aria-invalid={$errors.nome ? 'true' : undefined} bind:value={$form.nome} {...$constraints.nome} />
                 </label>
                 {#if $errors.nome}
                     <AlertError message={$errors.nome}/>
                 {/if}
                 <label class="label p-1">
-                    <span>Nome de usuário</span>
-                    <input class="input" type="text" name="username" aria-invalid={$errors.username ? 'true' : undefined} bind:value={$form.username} {...$constraints.username} />
+                    <span>Descrição</span>
+                    <textarea class="textarea" rows="4"  name="descricao" aria-invalid={$errors.descricao ? 'true' : undefined} bind:value={$form.descricao} {...$constraints.descricao}></textarea>
                 </label>
-                {#if $errors.username}
-                    <AlertError message={$errors.username}/>
+                {#if $errors.descricao}
+                    <AlertError message={$errors.descricao}/>
                 {/if}
                 <label class="label p-1">
-                    <span>Senha</span>
-                    <input class="input" type="password" name="pwd" aria-invalid={$errors.pwd ? 'true' : undefined} bind:value={$form.pwd} {...$constraints.pwd} />
+                    <span>Conteúdos</span>
+                    <input accept="application/pdf" class="input" name="conteudos" type="file" multiple aria-invalid={$errors.conteudos ? 'true' : undefined} bind:files={$conteudos} {...$constraints.conteudos} />
                 </label>
-                {#if $errors.pwd}
-                    <AlertError message={$errors.pwd}/>
+                {#if $errors.conteudos}
+                    <AlertError message={$errors.conteudos}/>
                 {/if}
             </section>
             <footer class="card-footer">

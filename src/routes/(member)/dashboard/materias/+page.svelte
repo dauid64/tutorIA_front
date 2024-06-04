@@ -1,11 +1,3 @@
-<script lang="ts">
-  import { isoDateStringForFormatBR } from '$lib/utils/formatDate.js';
-
-    export let data
-
-    let alunos = data.alunos
-</script>
-
 <div class="grow m-8 md:m-24">
     <div class="flex-col md:flex-row md:flex container justify-between items-center">
         <div class="flex-col md:flex md:flex-row">
@@ -13,7 +5,7 @@
             <button type="button" class="btn-sm md:btn variant-filled-secondary w-full md:w-fit mb-2">Pesquisar</button>
         </div>
         <div class="flex">
-            <a href="/cadastro/aluno" class="btn-sm md:btn variant-filled-secondary w-full text-center">Cadastrar Aluno</a>
+            <a href="/cadastro/materia" class="btn-sm md:btn variant-filled-secondary w-full text-center">Cadastrar Matéria</a>
         </div>
     </div>
     
@@ -25,28 +17,20 @@
                         <tr>
                             <th>Criado em</th>
                             <th>Nome</th>
-                            <th>Nome de usuário</th>
-                            <th>Matéria</th>
+                            <th>Qtd. alunos</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {#each alunos as aluno (aluno.id)}
-                            <tr>
-                                <td>{ isoDateStringForFormatBR(aluno.created_at) }</td>
-                                <td>{ aluno.nome }</td>
-                                <td>{ aluno.username }</td>
-                                <td>?</td>
-                            </tr>
-                        {:else}
                         <tr>
-                            <td colspan="4">Nenhum aluno encontrado</td>
+                            <td>04/06/2024 - 09:08:11</td>
+                            <td>Calculo 1</td>
+                            <td>5</td>
                         </tr>
-                        {/each}
                     </tbody>
                     <tfoot>
                         <tr>
-                            <th colspan="3">Total de Alunos</th>
-                            <td>{ alunos.length }</td>
+                            <th colspan="2">Total de Matérias</th>
+                            <td>2</td>
                         </tr>
                     </tfoot>
                 </table>

@@ -1,4 +1,5 @@
 import type TutorIAAPI from "$lib/api"
+import type { Aluno } from "$lib/server/models/aluno"
 import { fail } from "@sveltejs/kit"
 import { setFlash } from "sveltekit-flash-message/server"
 
@@ -14,10 +15,10 @@ export const load = ( async ({ locals, cookies }) => {
 
     if (responseReadAlunosData.error) {
         setFlash({ type: 'error', message: 'Não foi possível encontrar os alunos.'}, cookies)
-            return fail(400)
+        return fail(400)
     }
 
     return { 
-        'alunos': responseReadAlunosData.alunos
+        'alunos': responseReadAlunosData.alunos as Aluno[]
     }
 })
