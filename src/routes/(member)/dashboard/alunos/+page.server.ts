@@ -5,20 +5,28 @@ import { setFlash } from "sveltekit-flash-message/server"
 
 export const load = ( async ({ locals, cookies }) => {
     const tutorIAAPI = locals.tutorIAAPI as TutorIAAPI
+    const verifyData = await fetch("http://localhost:8080/api/verify", {
+        method: "GET",
+        credentials: "include"
+    })
+    const teste = await verifyData.json()
+    console.log(teste)
 
-    const responseReadAlunosData = await tutorIAAPI.fetchWrapper(
+    const response = await tutorIAAPI.fetchWrapper(
         'aluno',
         {
             method: 'GET'
         }
     )
 
-    if (responseReadAlunosData.error) {
+    if (response.error) {
         setFlash({ type: 'error', message: 'Não foi possível encontrar os alunos.'}, cookies)
         return fail(400)
     }
 
+    const data = await response.json()
+
     return { 
-        'alunos': responseReadAlunosData.alunos as Aluno[]
+        'alunos': data.alunos as Aluno[]
     }
 })

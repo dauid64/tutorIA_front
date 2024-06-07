@@ -4,13 +4,21 @@ import TutorIAAPI from '$lib/api';
 import { redirect, type Handle } from '@sveltejs/kit';
 import { sequence } from '@sveltejs/kit/hooks';
 
+
 const authorizationHandle: Handle = (async ({ event, resolve }) => {
-    if (event.route.id?.includes("member")) {
-        const session = await event.cookies.get("auth-login")
-        if (!session) {
-            throw redirect(303, "/login")
-        }
-    }
+    // if (event.route.id?.includes("member")) {
+    //     const tutorIAAPI = event.locals.tutorIAAPI
+
+    //     const verifyData = await tutorIAAPI.fetchWrapper("verify", {
+    //         method: "GET",
+    //     })
+
+    //     const token_is_valid = verifyData.result.is_valid
+    //     console.log(verifyData)
+    //     if (!token_is_valid) {
+    //         throw redirect(303, "/login")
+    //     }
+    // }
 
     return resolve(event)
 })

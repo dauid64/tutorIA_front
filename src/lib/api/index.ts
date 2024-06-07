@@ -38,7 +38,7 @@ export default class TutorIAAPI{
             }
         }
 
-        return await response.json()
+        return response
     }
 
     public async fetchWrapperWithMultiPart(endpoint: string, options: FetchOptionsMultiPart) {

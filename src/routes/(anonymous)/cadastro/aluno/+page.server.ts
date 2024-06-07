@@ -25,7 +25,7 @@ export const actions = {
             return fail(400, { form })
         }
 
-        const responseCreateUserData = await tutorIAAPI.fetchWrapper(
+        const responseCreateUser = await tutorIAAPI.fetchWrapper(
             'usuario',
             {
                 method: 'POST',
@@ -33,14 +33,16 @@ export const actions = {
             }
         )
 
-        if (responseCreateUserData.error) {
+        if (responseCreateUser.error) {
             setFlash({ type: 'error', message: 'Não foi possível criar o usuário.'}, cookies)
             return fail(400, { form })
         }
 
+        const responseCreateUserData = await responseCreateUser.json()
+
         form.data.usuario_id = responseCreateUserData.result.id
 
-        const responseCreateAlunoData = await tutorIAAPI.fetchWrapper(
+        const responseCreateAluno = await tutorIAAPI.fetchWrapper(
             'aluno',
             {
                 method: 'POST',
@@ -48,11 +50,11 @@ export const actions = {
             }
         )
 
-        if (responseCreateAlunoData.error) {
+        if (responseCreateAluno.error) {
             setFlash({ type: 'error', message: 'Não foi possível criar o aluno.'}, cookies)
             return fail(400, { form })
         }
 
-        redirect("/dashboard/alunos", { type: 'success', message: 'Aluno criado com sucesso!'}, cookies)
+        redirect("/login", { type: 'success', message: 'Aluno criado com sucesso!'}, cookies)
     }
 }
