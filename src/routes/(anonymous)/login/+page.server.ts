@@ -4,8 +4,7 @@ import type { RequestEvent } from "./$types"
 import { authSchema } from "$lib/server/models/auth"
 import type TutorIAAPI from "$lib/api"
 import { redirect, setFlash } from "sveltekit-flash-message/server"
-import * as set_cookie_parser from 'set-cookie-parser';
-import type { CookieSerializeOptions } from "cookie"
+import { signIn } from "../../../auth"
 
 export const load = (async () => {
     const form = await superValidate(zod(authSchema))
@@ -24,34 +23,8 @@ export const actions = {
             return fail(400, { form })
         }
 
-        const response = await tutorIAAPI.fetchWrapper(
-            'login',
-            {
-                method: 'POST',
-                body: form.data
-            }
-        )
-
-        if (response.error) {
-            setFlash({ type: 'error', message: 'Não foi possível realizar o login.'}, cookies)
-            return fail(400, { form })
-        }
-
-        const set_cookie = response.headers.get('set-cookie')
-        if (set_cookie) {
-            for (const str of set_cookie_parser.splitCookiesString(set_cookie)) {
-                const { name, value, ...options } = set_cookie_parser.parseString(str, {
-                    decodeValues: false
-                });
-                cookies.set(name, value, {
-                    ...options as unknown as CookieSerializeOptions,
-                    path: '/',
-                    secure: false,
-                    encode: (value) => value,
-                });
-            }
-        }
-        
+        await signIn(event)
+    
         redirect("/dashboard", { type: 'success', message: 'Login realizado com sucesso!'}, cookies)
     }
 }

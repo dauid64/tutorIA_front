@@ -3,22 +3,16 @@ import { env } from '$env/dynamic/public';
 import TutorIAAPI from '$lib/api';
 import { redirect, type Handle } from '@sveltejs/kit';
 import { sequence } from '@sveltejs/kit/hooks';
+import { handle as authHandle } from "./auth";
 
 
-const authorizationHandle: Handle = (async ({ event, resolve }) => {
-    // if (event.route.id?.includes("member")) {
-    //     const tutorIAAPI = event.locals.tutorIAAPI
-
-    //     const verifyData = await tutorIAAPI.fetchWrapper("verify", {
-    //         method: "GET",
-    //     })
-
-    //     const token_is_valid = verifyData.result.is_valid
-    //     console.log(verifyData)
-    //     if (!token_is_valid) {
-    //         throw redirect(303, "/login")
-    //     }
-    // }
+const protectedHandle: Handle = (async ({ event, resolve }) => {
+    if (event.route.id?.includes("member")) {
+        const session = await event.locals.getSession();
+		if (!session) {
+			redirect(303, '/login');
+		}
+    }
 
     return resolve(event)
 })
@@ -31,13 +25,24 @@ const handleTutorIAClient: Handle = (async ({ event, resolve }) => {
     } else {
         tutorIABackEndURL = "https://tutorIA/api/"
     }
-    
-    event.locals.tutorIAAPI = new TutorIAAPI(tutorIABackEndURL)
+
+    const session = await event.locals.getSession()
+    console.log(session)
+    if (session) {
+        event.locals.tutorIAAPI = new TutorIAAPI(
+            tutorIABackEndURL,
+            session.accessToken
+        )
+    }
+    if (!session) {
+        event.locals.tutorIAAPI = new TutorIAAPI(tutorIABackEndURL)
+    }
 
     return resolve(event)
 })
 
 export const handle = sequence(
+    authHandle,
+    protectedHandle,
     handleTutorIAClient,
-    authorizationHandle,
 );

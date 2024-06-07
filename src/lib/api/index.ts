@@ -11,15 +11,17 @@ export default class TutorIAAPI{
 
     public async fetchWrapper(endpoint: string, options: FetchOptions) {
         const url = `${this.baseURL}${endpoint}`
-        const headers = {
-            'Content-Type': 'application/json'
+        let headers = {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${this.jwtToken}`
         }
+
+        console.log(headers)
 
         const response = await fetch(url, {
             ...options,
             headers,
             body: JSON.stringify(options.body),
-            credentials: "include",
         })
 
         if (!response.ok) {
