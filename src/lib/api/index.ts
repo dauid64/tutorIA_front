@@ -43,9 +43,13 @@ export default class TutorIAAPI{
 
     public async fetchWrapperWithMultiPart(endpoint: string, options: FetchOptionsMultiPart) {
         const url = `${this.baseURL}${endpoint}`
+        let headers = {
+            'Authorization': `Bearer ${this.jwtToken}`
+        }
 
         const response = await fetch(url, {
             ...options,
+            headers,
             body: options.body,
             credentials: "include",
         })
@@ -66,6 +70,6 @@ export default class TutorIAAPI{
             }
         }
 
-        return await response.json()
+        return response
     }
 }
