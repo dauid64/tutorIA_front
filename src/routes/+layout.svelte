@@ -2,7 +2,7 @@
 	import '../app.postcss';
 	import { getFlash } from 'sveltekit-flash-message';
   	import { page } from '$app/stores';
-	import { initializeStores, Toast, type ToastSettings } from '@skeletonlabs/skeleton';
+	import { initializeStores, Toast, type ToastSettings, Modal } from '@skeletonlabs/skeleton';
 	import { getToastStore } from '@skeletonlabs/skeleton';
 
 	initializeStores();
@@ -33,4 +33,5 @@
 </script>
 
 <Toast />
+<Modal />
 <slot />

@@ -55,8 +55,6 @@ export const actions = {
             return fail(400, { form })
         }
 
-        
-
-        redirect("/login", { type: 'success', message: 'Aluno criado com sucesso!'}, cookies)
+        redirect("/dashboard/alunos", { type: 'success', message: 'Aluno criado com sucesso!'}, cookies)
     }
 }
