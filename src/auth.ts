@@ -2,7 +2,7 @@ import { dev } from "$app/environment";
 import { env as env_private } from "$env/dynamic/private";
 import { env as env_public } from '$env/dynamic/public';
 import TutorIAAPI from '$lib/api';
-import { SvelteKitAuth } from "@auth/sveltekit";
+import { CredentialsSignin, SvelteKitAuth } from "@auth/sveltekit";
 import Credentials from "@auth/sveltekit/providers/credentials"
 
 export const { handle, signIn, signOut } = SvelteKitAuth(async (event) => {
@@ -36,17 +36,17 @@ export const { handle, signIn, signOut } = SvelteKitAuth(async (event) => {
                     if (response.ok) {
                         return await response.json()
                     } else {
-                        return null
+                        throw new Error("User not found.")
                     }
                 },
             })
         ],
+        pages: {
+			signIn: '/login',
+			error: '/login',
+			// signOut: '/login'
+		},
         secret: env_private.TUTORIA_SECRET_AUTH as string,
-        async redirect({url, baseURL}) {
-            if (url.includes('logout')) return '/';
-            if (url.includes('login')) return '/';
-            return baseURL;
-        },
         callbacks: {
             async jwt({ token, user }) {
                 if (user) {
@@ -55,12 +55,17 @@ export const { handle, signIn, signOut } = SvelteKitAuth(async (event) => {
                 }
                 return token
             },
-            session: async ({ session, token, user }) => {
+            async session ({ session, token, user }) {
                 session.user.id = token.user_id
                 session.accessToken = token.accessToken
                 return session
             },
-          },
+            async redirect({ url, baseUrl }) {
+                if (url.includes('login')) return `/dashboard`;
+                if (url.includes('logout')) return '/';
+                return "/";
+            }
+          }
     }
     return authOptions
 })

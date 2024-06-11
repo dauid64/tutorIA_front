@@ -27,7 +27,6 @@ const handleTutorIAClient: Handle = (async ({ event, resolve }) => {
     }
 
     const session = await event.locals.getSession()
-    console.log(session)
     if (session) {
         event.locals.tutorIAAPI = new TutorIAAPI(
             tutorIABackEndURL,

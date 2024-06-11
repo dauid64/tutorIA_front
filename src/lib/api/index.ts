@@ -16,8 +16,6 @@ export default class TutorIAAPI{
             'Authorization': `Bearer ${this.jwtToken}`
         }
 
-        console.log(headers)
-
         const response = await fetch(url, {
             ...options,
             headers,
