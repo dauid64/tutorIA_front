@@ -1,3 +1,12 @@
+<script lang="ts">
+  import type { Materia } from '$lib/server/models/materia';
+  import { isoDateStringForFormatBR } from '$lib/utils/formatDate';
+
+    export let data
+
+    let materias = data.materias as Materia[]
+</script>
+
 <div class="grow m-8 md:m-24">
     <div class="flex-col md:flex-row md:flex container justify-between items-center">
         <div class="flex-col md:flex md:flex-row">
@@ -21,16 +30,22 @@
                         </tr>
                     </thead>
                     <tbody>
+                        {#each materias as materia (materia.id)}
+                            <tr>
+                                <td>{ isoDateStringForFormatBR(materia.created_at) }</td>
+                                <td>{ materia.nome }</td>
+                                <td>{ materia.qtd_alunos }</td>
+                            </tr>
+                        {:else}
                         <tr>
-                            <td>04/06/2024 - 09:08:11</td>
-                            <td>Calculo 1</td>
-                            <td>5</td>
+                            <td colspan="4">Nenhuma matéria encontrado</td>
                         </tr>
+                        {/each}
                     </tbody>
                     <tfoot>
                         <tr>
                             <th colspan="2">Total de Matérias</th>
-                            <td>2</td>
+                            <td>{ materias.length }</td>
                         </tr>
                     </tfoot>
                 </table>
