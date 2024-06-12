@@ -4,8 +4,12 @@
   	import { page } from '$app/stores';
 	import { initializeStores, Toast, type ToastSettings, Modal } from '@skeletonlabs/skeleton';
 	import { getToastStore } from '@skeletonlabs/skeleton';
+	import { computePosition, autoUpdate, offset, shift, flip, arrow } from '@floating-ui/dom';
+	import { storePopup } from '@skeletonlabs/skeleton';
 
 	initializeStores();
+
+	storePopup.set({ computePosition, autoUpdate, offset, shift, flip, arrow });
 
 	const flash = getFlash(page);
 

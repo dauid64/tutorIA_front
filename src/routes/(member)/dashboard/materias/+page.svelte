@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { Materia } from '$lib/server/models/materia';
   import { isoDateStringForFormatBR } from '$lib/utils/formatDate';
+  import { Icon, UserGroup } from 'svelte-hero-icons';
 
     export let data
 
@@ -27,6 +28,7 @@
                             <th>Criado em</th>
                             <th>Nome</th>
                             <th>Qtd. alunos</th>
+                            <th>Ações</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -35,6 +37,11 @@
                                 <td>{ isoDateStringForFormatBR(materia.created_at) }</td>
                                 <td>{ materia.nome }</td>
                                 <td>{ materia.qtd_alunos }</td>
+                                <td>
+                                    <a href="/dashboard/materias/editar/alunos/{materia.id}" class="btn btn-sm variant-filled-secondary cursor-pointer">
+                                        <Icon src={UserGroup} size=20/>
+                                    </a>
+                                </td>
                             </tr>
                         {:else}
                         <tr>
