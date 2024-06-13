@@ -49,12 +49,12 @@ export const actions = {
         )
 
         if (responseCreateAluno.error) {
-            setFlash({ type: 'error', message: 'Não foi possível criar o aluno.'}, cookies)
+            setFlash({ type: 'error', message: 'Não foi possível criar o professor.'}, cookies)
             return fail(400, { form })
         }
 
         
 
-        redirect("/login", { type: 'success', message: 'Aluno criado com sucesso!'}, cookies)
+        redirect("/login", { type: 'success', message: 'Professor criado com sucesso!'}, cookies)
     }
 }
