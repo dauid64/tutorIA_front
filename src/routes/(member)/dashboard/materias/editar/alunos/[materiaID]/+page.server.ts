@@ -1,5 +1,6 @@
 import type TutorIAAPI from "$lib/api"
 import type { Aluno } from "$lib/server/models/aluno"
+import { handleAPIError } from "$lib/utils/tutorIAAPIError"
 import { fail } from "@sveltejs/kit"
 import { setFlash } from "sveltekit-flash-message/server"
 
@@ -14,9 +15,8 @@ export const load = ( async ({ params, locals, cookies }) => {
         }
     )
 
-    if (responseAlunosRegistered.error) {
-        setFlash({ type: 'error', message: 'Não foi possível encontrar os alunos cadastrados.'}, cookies)
-        return fail(400)
+    if (!responseAlunosRegistered.ok) {
+        return await handleAPIError(cookies, responseAlunosRegistered, 'Não foi possível encontrar os alunos cadastrados.')
     }
 
     const dataAlunosRegistered = await responseAlunosRegistered.json()
@@ -28,9 +28,8 @@ export const load = ( async ({ params, locals, cookies }) => {
         }
     )
 
-    if (responseAlunosNotRegistered.error) {
-        setFlash({ type: 'error', message: 'Não foi possível encontrar os alunos não cadastrados.'}, cookies)
-        return fail(400)
+    if (!responseAlunosNotRegistered.ok) {
+        return await handleAPIError(cookies, responseAlunosNotRegistered, 'Não foi possível encontrar os alunos não cadastrados.')
     }
 
     const dataAlunosNotRegistered = await responseAlunosNotRegistered.json()
@@ -60,9 +59,8 @@ export const actions = {
             }
         )
 
-        if (response.error) {
-            setFlash({ type: 'error', message: 'Não foi possível cadastrar o aluno na matéria.'}, cookies)
-            return fail(400)
+        if (!response.ok) {
+            return await handleAPIError(cookies, response, 'Não foi possível cadastrar o aluno na matéria.')
         }
 
         setFlash({ type: 'success', message: 'Aluno cadastrado na matéria.'}, cookies)
@@ -86,9 +84,8 @@ export const actions = {
             }
         )
 
-        if (response.error) {
-            setFlash({ type: 'error', message: 'Não foi possível descadastrar o aluno na matéria.'}, cookies)
-            return fail(400)
+        if (!response.ok) {
+            return await handleAPIError(cookies, response, 'Não foi possível descadastrar o aluno na matéria.')
         }
 
         setFlash({ type: 'success', message: 'Aluno descadastrado da matéria.'}, cookies)

@@ -4,6 +4,7 @@ import { zod } from "sveltekit-superforms/adapters"
 import TutorIAAPI from "$lib/api"
 import { fail, type RequestEvent } from "@sveltejs/kit"
 import { redirect, setFlash } from "sveltekit-flash-message/server"
+import { handleAPIError } from "$lib/utils/tutorIAAPIError"
 
 export const load = (async () => {
     const form = await superValidate(zod(materiaSchema))
@@ -34,8 +35,7 @@ export const actions = {
         )
 
         if (response.error) {
-            setFlash({ type: 'error', message: 'Não foi possível criar a matéria.'}, cookies)
-            return fail(400, { form })
+            return await handleAPIError(cookies, response, 'Não foi possível criar a matéria.')
         }
 
         redirect("/dashboard/materias", { type: 'success', message: 'Matéria criado com sucesso!'}, cookies)

@@ -12,6 +12,19 @@ const protectedHandle: Handle = (async ({ event, resolve }) => {
 		if (!session) {
 			redirect(303, '/login');
 		}
+        const tutorIAAPI = event.locals.tutorIAAPI as TutorIAAPI
+
+        const response = await tutorIAAPI.fetchWrapper("validate",
+            {
+                method: 'GET'
+            }
+        )
+
+        const data = await response.json()
+
+        if (!response.ok && data.error.message == "NO_AUTH") {
+            redirect(303, '/login');
+        }
     }
 
     return resolve(event)
@@ -42,6 +55,6 @@ const handleTutorIAClient: Handle = (async ({ event, resolve }) => {
 
 export const handle = sequence(
     authHandle,
-    protectedHandle,
     handleTutorIAClient,
+    protectedHandle,
 );

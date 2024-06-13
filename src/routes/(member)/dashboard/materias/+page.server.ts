@@ -1,7 +1,6 @@
 import type TutorIAAPI from "$lib/api"
 import type { Materia } from "$lib/server/models/materia"
-import { fail } from "@sveltejs/kit"
-import { setFlash } from "sveltekit-flash-message/server"
+import { handleAPIError } from "$lib/utils/tutorIAAPIError"
 
 export const load = ( async ({ locals, cookies }) => {
     const tutorIAAPI = locals.tutorIAAPI as TutorIAAPI
@@ -13,9 +12,8 @@ export const load = ( async ({ locals, cookies }) => {
         }
     )
 
-    if (response.error) {
-        setFlash({ type: 'error', message: 'Não foi possível encontrar as matérias.'}, cookies)
-        return fail(400)
+    if (!response.ok) {
+        return await handleAPIError(cookies, response, 'Não foi possível encontrar as matérias.')
     }
 
     const data = await response.json()

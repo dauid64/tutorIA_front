@@ -1,4 +1,4 @@
-import type { FetchOptions, FetchOptionsMultiPart } from './types';
+import type { APIErrorResponse, APISuccessResponse, FetchOptions, FetchOptionsMultiPart } from './types';
 
 export default class TutorIAAPI{
     private baseURL: string
@@ -21,21 +21,12 @@ export default class TutorIAAPI{
             headers,
             body: JSON.stringify(options.body),
         })
-
+        
         if (!response.ok) {
             console.log(
                 'Ocorreu um erro na resposta da chamada do TutoRIAAPI. Fazer tratamento dela.\n',
                 `URL: ${url}`
             )
-            const errorText = await response.text()
-            console.log(errorText)
-
-            try {
-                const errorObj = JSON.parse(errorText)
-                return { ...errorObj, status: response.status }
-            } catch (e) {
-                return { error: { message: 'SERVICE_ERROR', data: { detail: 'Erro inesperado ocorreu'}, status: 'error'}, status: response.status }
-            }
         }
 
         return response
@@ -59,15 +50,6 @@ export default class TutorIAAPI{
                 'Ocorreu um erro na resposta da chamada do TutoRIAAPI. Fazer tratamento dela.\n',
                 `URL: ${url}`
             )
-            const errorText = await response.text()
-            console.log(errorText)
-
-            try {
-                const errorObj = JSON.parse(errorText)
-                return { ...errorObj, status: response.status }
-            } catch (e) {
-                return { error: { message: 'SERVICE_ERROR', data: { detail: 'Erro inesperado ocorreu'}, status: 'error'}, status: response.status }
-            }
         }
 
         return response

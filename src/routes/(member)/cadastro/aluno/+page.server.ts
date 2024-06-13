@@ -6,6 +6,7 @@ import type TutorIAAPI from '$lib/api';
 import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { setFlash } from 'sveltekit-flash-message/server';
+import { handleAPIError } from '$lib/utils/tutorIAAPIError';
 
 export const load = (async () => {
     const form = await superValidate(zod(alunoSchema))
@@ -33,9 +34,8 @@ export const actions = {
             }
         )
 
-        if (responseCreateUser.error) {
-            setFlash({ type: 'error', message: 'Não foi possível criar o usuário.'}, cookies)
-            return fail(400, { form })
+        if (!responseCreateUser.ok) {
+            return await handleAPIError(cookies, responseCreateUser, 'Não foi possível criar o usuário.')
         }
 
         const responseCreateUserData = await responseCreateUser.json()
@@ -50,9 +50,8 @@ export const actions = {
             }
         )
 
-        if (responseCreateAluno.error) {
-            setFlash({ type: 'error', message: 'Não foi possível criar o aluno.'}, cookies)
-            return fail(400, { form })
+        if (!responseCreateAluno.ok) {
+            return await handleAPIError(cookies, responseCreateAluno, 'Não foi possível criar o aluno.')
         }
 
         redirect("/dashboard/alunos", { type: 'success', message: 'Aluno criado com sucesso!'}, cookies)

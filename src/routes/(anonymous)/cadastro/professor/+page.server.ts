@@ -1,5 +1,6 @@
 import type TutorIAAPI from "$lib/api"
 import { professorSchema } from "$lib/server/models/professor"
+import { handleAPIError } from "$lib/utils/tutorIAAPIError"
 import { fail, type RequestEvent } from "@sveltejs/kit"
 import { redirect, setFlash } from "sveltekit-flash-message/server"
 import { superValidate } from "sveltekit-superforms"
@@ -31,9 +32,8 @@ export const actions = {
             }
         )
 
-        if (responseCreateUser.error) {
-            setFlash({ type: 'error', message: 'Não foi possível criar o usuário.'}, cookies)
-            return fail(400, { form })
+        if (!responseCreateUser.ok) {
+            return await handleAPIError(cookies, responseCreateUser, 'Não foi possível criar o usuário.')
         }
 
         const responseCreateUserData = await responseCreateUser.json()
@@ -48,9 +48,8 @@ export const actions = {
             }
         )
 
-        if (responseCreateAluno.error) {
-            setFlash({ type: 'error', message: 'Não foi possível criar o professor.'}, cookies)
-            return fail(400, { form })
+        if (!responseCreateAluno.ok) {
+            return await handleAPIError(cookies, responseCreateAluno, 'Não foi possível criar o professor.')
         }
 
         
